@@ -10,6 +10,8 @@
     <bean class="com.dubboclub.dk.monitor.DubboKeeperMonitorService" autowire="byType" id="dubboKeeperMonitorService">
 
     </bean>
+    
+   <bean class="com.dubboclub.dk.monitor.LogStatistics" autowire="byType" id="logStatistics" init-method="init"/>
 
     <dubbo:service interface="com.alibaba.dubbo.monitor.MonitorService" ref="dubboKeeperMonitorService" id="exportMonitorService">
         <dubbo:parameter key="interval" value="${monitor.collect.interval}"/>

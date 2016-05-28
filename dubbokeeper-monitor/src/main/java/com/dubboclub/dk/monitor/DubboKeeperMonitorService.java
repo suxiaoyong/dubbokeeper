@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.alibaba.dubbo.common.URL;
-import com.alibaba.dubbo.common.extension.ExtensionLoader;
-import com.alibaba.dubbo.common.utils.ConfigUtils;
 import com.alibaba.dubbo.monitor.MonitorService;
 import com.dubboclub.dk.storage.StatisticsStorage;
 import com.dubboclub.dk.storage.model.Statistics;
@@ -33,8 +31,14 @@ public class DubboKeeperMonitorService implements MonitorService {
 
 	private StatisticsStorage statisticsStorage;
 
+	private LogStatistics logStatistics;
+
 	public void setStatisticsStorage(StatisticsStorage statisticsStorage) {
 		this.statisticsStorage = statisticsStorage;
+	}
+
+	public void setLogStatistics(LogStatistics logStatistics) {
+		this.logStatistics = logStatistics;
 	}
 
 	public DubboKeeperMonitorService() {
@@ -61,7 +65,8 @@ public class DubboKeeperMonitorService implements MonitorService {
         if(totalCount<=0){
             return;
         }
-        statistics.setElapsed(statisticsURL.getParameter(MonitorService.ELAPSED, 0)/totalCount);
+		statistics.setElapsed(statisticsURL.getParameter(
+				MonitorService.ELAPSED, 0) / successCount);
         statistics.setInput(statisticsURL.getParameter(MonitorService.INPUT,0)/totalCount);
         statistics.setOutput(statisticsURL.getParameter(MonitorService.OUTPUT,0)/totalCount);
         if(statistics.getElapsed()!=0){
@@ -89,6 +94,7 @@ public class DubboKeeperMonitorService implements MonitorService {
 			statistics.setRemoteAddress(statisticsURL.getParameter(MonitorService.CONSUMER));
 		}
         statisticsStorage.storeStatistics(statistics);
+		logStatistics.log(statistics);
 	}
 
 	
